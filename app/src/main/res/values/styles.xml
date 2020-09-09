@@ -23,4 +23,10 @@
     <style name="customButton" parent="Widget.AppCompat.Button.Colored">
     </style>
 
+    <style name="AppTheme.NoTitleBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
 </resources>
