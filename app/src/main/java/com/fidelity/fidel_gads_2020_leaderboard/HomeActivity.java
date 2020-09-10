@@ -2,12 +2,16 @@ package com.fidelity.fidel_gads_2020_leaderboard;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 
 import okhttp3.ResponseBody;
@@ -22,6 +26,7 @@ public class HomeActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.submit_page);
+
         firstName = findViewById(R.id.firstName);
         lastName = findViewById(R.id.lastName);
         emailTV = findViewById(R.id.email);
@@ -30,17 +35,17 @@ public class HomeActivity extends AppCompatActivity{
         findViewById(R.id.button_submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submitProject();
+                validate();
             }
         });
 
     }
 
-    private void submitProject(){
-        String first_name = firstName.getText().toString().trim();
-        String last_name = lastName.getText().toString().trim();
-        String email_view = emailTV.getText().toString().trim();
-        String git_link = gitLink.getText().toString().trim();
+    private void validate(){
+        final String first_name = firstName.getText().toString().trim();
+        final String last_name = lastName.getText().toString().trim();
+        final String email_view = emailTV.getText().toString().trim();
+        final String git_link = gitLink.getText().toString().trim();
 
         if(first_name.isEmpty()){
             firstName.setError("This field is required");
@@ -67,31 +72,75 @@ public class HomeActivity extends AppCompatActivity{
             gitLink.requestFocus();
             return;
         }
+
+        new AlertDialog.Builder(HomeActivity.this)
+//                .setTitle("Two Buttons")
+                .setMessage("Are you sure?")
+                .setPositiveButton("YES",
+                        new DialogInterface.OnClickListener() {
+                            @TargetApi(11)
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                ViewGroup viewGroup = findViewById(android.R.id.content);
+                                LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
+                                View dialogView = inflater.inflate(R.layout.progress_load, viewGroup, false);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+                                builder.setView(dialogView);
+                                AlertDialog alertDialog = builder.create();
+                                alertDialog.setCancelable(true);
+                                alertDialog.show();
+
+                                submitProject(first_name,last_name,email_view,git_link, alertDialog);
+                            }
+                }).show();
+
+
+
+
+    }
+
+    private void submitProject(String first_name, String last_name, String email_view, String git_link, final AlertDialog alertDialog){
         Call<ResponseBody> call = HttpClient
                 .getInstance().getApi()
                 .submitProject(first_name,last_name,email_view,git_link);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(HomeActivity.this);
-                alert.setIcon(R.drawable.toplearner);
-//                alert.setTitle("Game Over");
-                alert.setCancelable(true);
-                alert.setMessage("Submission Successful!");
-                alert.show();
+                alertDialog.dismiss();
+                if(response.isSuccessful()){
+                    getResponseDialog(true);
+                }else{
+                    getResponseDialog(false);
+                }
+                Log.d("Respose: ", response.toString());
 
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(HomeActivity.this);
-                alert.setIcon(R.drawable.toplearner);
-//                alert.setTitle("Game Over");
-                alert.setCancelable(true);
-                alert.setMessage("Submission not Successful");
-                alert.show();
+                alertDialog.dismiss();
+                getResponseDialog(true);
+
             }
         });
+    }
 
+    private void getResponseDialog(boolean b) {
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
+
+        View dialogView = null;
+        if(b){
+
+            dialogView= inflater.inflate(R.layout.display_success, viewGroup, false);
+        }else{
+
+        dialogView = inflater.inflate(R.layout.display_response, viewGroup, false);
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+        builder.setView(dialogView);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
     }
 }

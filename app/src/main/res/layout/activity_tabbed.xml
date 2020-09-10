@@ -28,9 +28,20 @@
         android:layout_weight="50"
         android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
-
-    <Button
-        android:id="@+id/button_submit"
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/button_submit"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_weight="50"-->
+<!--        android:backgroundTint="@color/colorAccent"-->
+<!--        android:padding="10dp"-->
+<!--        android:text="Submit"-->
+<!--        android:textAllCaps="false"-->
+<!--        android:textColor="@color/colorPrimaryDark"-->
+<!--        android:textSize="12sp"-->
+<!--        app:cornerRadius="20dp" />-->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

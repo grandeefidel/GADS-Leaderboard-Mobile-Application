@@ -25,6 +25,8 @@ import java.util.Random;
 public class TabbedActivity extends AppCompatActivity {
     private LearnersRecylclerAdapter mLearnersRecylclerAdapter;
     private RecyclerView rvLearners;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +36,7 @@ public class TabbedActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        Button btnSubmit = findViewById(R.id.button_submit);
+        Button btnSubmit = findViewById(R.id.button);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,6 +44,7 @@ public class TabbedActivity extends AppCompatActivity {
                 startActivity(openHomeActivity);
             }
         });
+
 
 
 
